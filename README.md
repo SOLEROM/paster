@@ -7,6 +7,8 @@ search across all of them), type a few characters, hit Enter — the popup
 closes, focus returns to the window you came from, and the chosen line is
 pasted there.
 
+![](demo0.png)
+
 No custom GUI app and no daemon: one rofi launch plus three short shell
 scripts. rofi draws, places, and styles its own popup, so there is no
 persistent process between toggles, no `for_window` rule, and transparency
