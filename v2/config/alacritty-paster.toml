@@ -1,0 +1,19 @@
+# Alacritty base profile used only for the Paster window (passed via
+# --config-file by bin/toggle.sh). Opacity, font size, and colors here are
+# just fallbacks — the live values come from <root>/config.yaml and are
+# injected on top via `alacritty -o` at spawn. Transparency blending is done
+# by the running compositor (GNOME/KDE/XFCE composite out of the box; bare
+# i3 needs picom, otherwise opacity is simply ignored).
+
+[window]
+opacity = 0.85
+decorations = "None"
+dynamic_title = false
+padding = { x = 12, y = 8 }
+
+[font]
+size = 12.0
+
+[colors.primary]
+background = "#10141a"
+foreground = "#d8dee9"

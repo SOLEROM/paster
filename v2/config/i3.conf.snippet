@@ -1,0 +1,8 @@
+# >>> paster v2 >>>
+# Tabbed drop-down prompt picker (Guake-style) — see __PASTER_DIR__/README.md
+# Settings live in __PASTER_DIR__/config.yaml — re-run install.sh after edits.
+# To change the hotkey: set it there, or re-run __PASTER_DIR__/install.sh '<key>'
+# Geometry is applied by bin/toggle.sh per-toggle (focused output aware).
+for_window [class="Paster"] floating enable, sticky enable, border pixel __PASTER_BORDER__
+bindsym __PASTER_KEY__ exec --no-startup-id __PASTER_DIR__/bin/toggle.sh
+# <<< paster v2 <<<

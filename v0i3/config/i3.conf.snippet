@@ -1,0 +1,8 @@
+# >>> paster v0i3 >>>
+# Drop-down prompt picker (Guake-style) — see __PASTER_DIR__/README.md
+# To change the hotkey, re-run: __PASTER_DIR__/install.sh '<key>'
+# (e.g. 'Mod4+p' Super+p, 'Mod1+p' Alt+p, '$mod+space' — anything bindsym accepts)
+# Geometry is applied by bin/toggle.sh per-toggle (focused output aware).
+for_window [class="Paster"] floating enable, sticky enable, border pixel 1
+bindsym __PASTER_KEY__ exec --no-startup-id __PASTER_DIR__/bin/toggle.sh
+# <<< paster v0i3 <<<

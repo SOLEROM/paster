@@ -1,0 +1,26 @@
+# paster v2 — global settings.
+# Apply changes by re-running ./install.sh — it re-wires the hotkey, closes
+# the old Paster window, and the next toggle spawns one with the new values.
+# Flat "key: value" only (read by bash, not a full YAML parser); trailing
+# "# comments" are fine, colors should stay quoted.
+
+# Hotkey to toggle the popup, in i3-style notation: modifiers joined with
+# "+", e.g. Ctrl+space, Mod4+p (Super), Mod1+space (Alt), Ctrl+Shift+F5.
+# The installer translates it for your desktop (i3 bindsym, GNOME/Cinnamon/
+# MATE/XFCE shortcut, sxhkd). "$mod+p" is valid on i3/Regolith only.
+# Empty = auto: $mod+p Regolith, Mod1+p plain i3, Ctrl+space elsewhere.
+# Running ./install.sh '<key>' overrides this.
+hotkey: "Ctrl+space"
+
+# Popup size, in % of the screen you are currently working on (focused
+# workspace on i3, the monitor under the mouse elsewhere).
+# width_pct < 100 shrinks the popup equally from both sides (kept centered).
+width_pct: 100
+height_pct: 40      # measured from the top of the screen
+
+# Look.
+opacity_pct: 85     # 100 = fully solid, lower = more transparent (needs a compositor)
+background: "#10141a"
+foreground: "#d8dee9"
+font_size: 12
+border_px: 1        # window border in pixels — i3 only, ignored on other desktops

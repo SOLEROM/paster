@@ -1,0 +1,23 @@
+# paster v3 — global settings.
+# Look/size keys (width, height, opacity, colors, font, border) are re-read
+# on every toggle — just save and press the hotkey, no reinstall needed.
+# Only `hotkey` requires re-running ./install.sh (it lives in the i3 config).
+# Flat "key: value" only (read by bash, not a full YAML parser); trailing
+# "# comments" are fine, colors should stay quoted.
+
+# Hotkey to toggle the popup (anything i3 bindsym accepts, e.g. Mod4+p,
+# Mod1+space, $mod+p). Empty = auto: $mod+p (Super+p) on Regolith,
+# Mod1+p (Alt+p) on plain i3. Running ./install.sh '<key>' overrides this.
+hotkey: "Ctrl+space"
+
+# Popup size, in % of the screen you are currently working on.
+# width_pct < 100 shrinks the popup equally from both sides (kept centered).
+width_pct: 100
+height_pct: 40      # measured from the top of the screen
+
+# Look.
+opacity_pct: 85     # 100 = fully solid, lower = more transparent (real alpha with a compositor)
+background: "#10141a"
+foreground: "#d8dee9"
+font_size: 12
+border_px: 1        # border around the popup (drawn by rofi), in pixels

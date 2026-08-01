@@ -1,0 +1,6 @@
+Explain this code step by step
+Summarize the following text in three bullet points
+Refactor this function for readability, keep behavior identical
+Write unit tests for the following code
+Fix the grammar in the following text, keep the tone
+Translate the following text to English

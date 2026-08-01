@@ -1,0 +1,16 @@
+# Alacritty profile used only for the Paster window (passed via --config-file
+# by bin/toggle.sh). Semi-transparent, undecorated — the "half clear" overlay
+# look; actual blending is done by the running compositor (picom).
+
+[window]
+opacity = 0.85
+decorations = "None"
+dynamic_title = false
+padding = { x = 12, y = 8 }
+
+[font]
+size = 12.0
+
+[colors.primary]
+background = "#10141a"
+foreground = "#d8dee9"
