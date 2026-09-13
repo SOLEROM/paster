@@ -78,6 +78,8 @@ The installer:
 - Type to fuzzy-filter (fzf-style ranking), **Enter** — copy the line to
   the clipboard, close, refocus your previous window, and auto-paste there
   (`Ctrl+Shift+V` if that window is a known terminal, `Ctrl+V` otherwise).
+  Every step after the clipboard is configurable — see the *Paste
+  behavior* keys in `config.yaml` (`auto_paste: false` = clipboard only).
 
 The popup reopens on the tab you last picked from.
 
@@ -107,10 +109,25 @@ The popup reopens on the tab you last picked from.
 | `font_size`  | `12`      | popup font size                                      |
 | `border_px`  | `1`       | border around the popup (drawn by rofi), in pixels   |
 
-**Look and size keys apply on the next toggle** — the theme is re-rendered
-from `config.yaml` at every launch, no reinstall needed (an improvement
-over v1). Only `hotkey` needs `./install.sh` again, since it lives in the
-i3 config.
+Paste behavior (what Enter does after copying the line to the clipboard):
+
+| key                  | default        | meaning                                                        |
+|----------------------|----------------|----------------------------------------------------------------|
+| `auto_paste`         | `true`         | send the paste keystroke; `false` = clipboard + refocus only   |
+| `paste_delay_ms`     | `150`          | wait after refocusing before the keystroke (`0`–`5000`)        |
+| `paste_key`          | `ctrl+v`       | keystroke for ordinary windows (xdotool `key` syntax)          |
+| `terminal_paste_key` | `ctrl+shift+v` | keystroke for windows whose WM_CLASS is in `terminal_classes`  |
+| `terminal_classes`   | *(see file)*   | `\|`-separated WM_CLASS names, matched case-insensitively      |
+| `press_enter`        | `false`        | also send `Return` after the paste (submits in chat UIs; **runs** the line in a terminal); ignored when `auto_paste` is `false` |
+
+Booleans accept `true/false`, `yes/no`, `on/off`, `1/0`. Any invalid value
+falls back to its default with a `paster: config …` warning on stderr.
+
+**Look and size keys apply on the next toggle, paste keys on the next
+Enter** — the theme is re-rendered from `config.yaml` at every launch and
+`paste-back.sh` re-reads the file on every paste, no reinstall needed (an
+improvement over v1). Only `hotkey` needs `./install.sh` again, since it
+lives in the i3 config.
 
 ## Layout
 
@@ -122,11 +139,15 @@ paster/
 ├── bin/
 │   ├── toggle.sh                # hotkey target: focus capture, theme render, rofi launch
 │   ├── tab-mode.sh              # rofi script-mode backend (one instance per tab)
-│   ├── paste-back.sh            # clipboard + focus-restore + paste keystroke
-│   └── lib-config.sh            # config.yaml reader (sourced by toggle.sh)
+│   ├── paste-back.sh            # clipboard + focus-restore + paste keystroke (per config.yaml)
+│   └── lib-config.sh            # config.yaml reader (sourced by toggle.sh, install.sh, paste-back.sh)
 ├── config/
 │   ├── i3.conf.snippet          # keybinding (template; no window rule needed)
 │   └── paster.rasi.tmpl         # rofi theme template, rendered per toggle
+├── tests/
+│   ├── run.sh                   # runs every test-*.sh (plain bash, no framework)
+│   ├── test-config.sh           # config.yaml parsing + validation
+│   └── test-paste-back.sh       # paste-back.sh against stubbed xclip/xdotool/xprop
 ├── install.sh
 ├── README.md
 └── devRef/                      # dev-stage reference: v0–v2 + planning docs
@@ -139,10 +160,14 @@ paster/
   they clash with rofi's mode syntax).
 - **Everything visual** — `config.yaml`; applies on the next toggle.
 - **Hotkey** — `config.yaml` + `./install.sh`, or `./install.sh '<key>'`.
-- **Terminal detection** — apps that should receive `Ctrl+Shift+V` are
-  listed in `TERMINAL_CLASSES` in `bin/paste-back.sh` (matched
-  case-insensitively against WM_CLASS; find a window's class with
-  `xprop WM_CLASS`).
+- **Paste behavior** — `config.yaml`; applies on the next Enter.
+  `auto_paste: false` turns paster into a pure clipboard picker;
+  `press_enter: true` submits the pasted prompt straight away.
+- **Terminal detection** — apps that should receive `terminal_paste_key`
+  (`Ctrl+Shift+V`) are listed in `terminal_classes` in `config.yaml`
+  (matched case-insensitively against WM_CLASS; find a window's class with
+  `xprop WM_CLASS`, second quoted value). To send the same keystroke
+  everywhere, set `terminal_paste_key` equal to `paste_key`.
 - **Tab-bar colors / theme details** beyond config.yaml —
   `config/paster.rasi.tmpl`.
 
@@ -152,9 +177,13 @@ paster/
   `Ctrl+V` manually; happens if the previous window closed meanwhile.
 - **Paste keystroke arrives too early / gets swallowed** — tab-mode.sh
   waits for the rofi process to exit before pasting; if you see this,
-  raise the `sleep 0.15` in `bin/paste-back.sh`.
+  raise `paste_delay_ms` in `config.yaml`.
+- **Nothing is pasted, but the clipboard is right** — check `auto_paste`
+  in `config.yaml` (and look for `paster: config …` warnings by running
+  `printf test | bin/paste-back.sh` from a terminal).
 - **Wrong paste keystroke in some app** — add its WM_CLASS to
-  `TERMINAL_CLASSES` (or remove it) in `bin/paste-back.sh`.
+  `terminal_classes` (or remove it), or change `paste_key` /
+  `terminal_paste_key`, in `config.yaml`.
 - **Hotkey does nothing** — check which config your i3 actually loads:
   `pgrep -a i3` shows the `-c <path>` it was started with (Regolith uses
   `/etc/regolith/i3/config` + `config.d` drop-ins, not `~/.config/i3/config`).
@@ -167,3 +196,14 @@ paster/
   re-run `./install.sh` (it closes leftover Paster windows).
 - **Stale state** — `$XDG_RUNTIME_DIR/paster-prev-win`, `paster-last-tab`,
   and the rendered `paster.rasi` (fallback `/tmp`); all safe to delete.
+
+## Tests
+
+```sh
+./tests/run.sh
+```
+
+Plain bash, no framework: `test-config.sh` feeds temp YAML files to
+`lib-config.sh`, `test-paste-back.sh` runs `paste-back.sh` with stub
+`xclip`/`xdotool`/`xprop`/`sleep` on `PATH` and checks the recorded calls,
+so neither needs an X session.

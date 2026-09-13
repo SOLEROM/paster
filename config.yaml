@@ -1,6 +1,7 @@
 # paster v3 — global settings.
 # Look/size keys (width, height, opacity, colors, font, border) are re-read
-# on every toggle — just save and press the hotkey, no reinstall needed.
+# on every toggle, and the paste-behavior keys on every Enter — just save,
+# no reinstall needed.
 # Only `hotkey` requires re-running ./install.sh (it lives in the i3 config).
 # Flat "key: value" only (read by bash, not a full YAML parser); trailing
 # "# comments" are fine, colors should stay quoted.
@@ -21,3 +22,15 @@ background: "#10141a"
 foreground: "#d8dee9"
 font_size: 12
 border_px: 1        # border around the popup (drawn by rofi), in pixels
+
+# Paste behavior — what happens after you press Enter on an entry.
+# The line is always copied to the clipboard and focus always returns to
+# the window you came from; the keys below control the paste keystroke.
+auto_paste: true             # false = clipboard + refocus only, paste it yourself (Ctrl+V)
+paste_delay_ms: 150          # wait after the refocus before sending the keystroke (0-5000)
+paste_key: "ctrl+v"          # keystroke for ordinary windows (xdotool key syntax)
+terminal_paste_key: "ctrl+shift+v"   # keystroke for windows listed in terminal_classes
+# WM_CLASS names (case-insensitive, "|"-separated) that get terminal_paste_key.
+# Find a window's class with `xprop WM_CLASS` (the second quoted value).
+terminal_classes: "alacritty|kitty|urxvt|rxvt|xterm|st|st-256color|gnome-terminal|gnome-terminal-server|xfce4-terminal|konsole|terminator|tilix|termite|guake|lxterminal|sakura|qterminal|eterm|wezterm|org.wezfurlong.wezterm"
+press_enter: false           # true = send Return after the paste (submits in chat UIs, RUNS the line in a terminal)
