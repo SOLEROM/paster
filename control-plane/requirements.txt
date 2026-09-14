@@ -1,0 +1,8 @@
+# paster front — runtime deps. webterm is NOT here: run.sh installs it
+# editable from the sibling solBench checkout (plan §2.2) on every start.
+flask>=3.0
+flask-socketio>=5.3
+simple-websocket>=1.0
+# the test suite runs from the same venv (./run.sh --test)
+pytest>=8.0
+pytest-cov>=5.0

@@ -1,0 +1,182 @@
+/* ==========================================================================
+   vsCodeFront — the small-screen layout
+   ==========================================================================
+   A REAL phone layout in the same SPA, not a column-hiding breakpoint. One
+   stylesheet, no second codebase, no framework. Ported from soldo (the only
+   app in the family with a phone layout as of 2026-08) and stripped of its
+   item-specific rules, which stay app-side.
+
+   Below 768px the shell re-shapes:
+     - the activity rail becomes a BOTTOM TAB BAR — thumbs reach the bottom
+       of a phone, not the left edge; the rail's bottom group (Help, Config)
+       moves behind a ⋯ "More" button (wb-mobile.js builds the bar from the
+       activity items, no extra markup);
+     - the sidebar becomes a DRAWER over ☰ (#btn-drawer in the title bar),
+       reusing the existing hidden-state class rather than a new component;
+     - any element with class .sheet becomes a FULL-SCREEN SHEET that slides
+       up over the view (an inspector, a detail pane) — openSheet(el);
+     - the modal docks to the bottom as a near-full-width sheet;
+     - the title bar grows to 44px; the editor tab strip and the cldBar
+       meters (which need ~560px) are dropped.
+
+   Two rules here are not cosmetic: 44px minimum touch targets, and 16px
+   font on every input — below that, mobile browsers zoom on focus and the
+   layout fights the user on every field.
+
+   Host requirement, pinned by every app's test_webterm_keyboard.py:
+     <meta name="viewport" content="… viewport-fit=cover,
+           interactive-widget=resizes-content">
+   viewport-fit lets env(safe-area-inset-*) work; interactive-widget makes
+   the soft keyboard SHRINK the layout instead of covering the last rows.
+   ========================================================================== */
+
+/* The breakpoint, published for wb-mobile.js (isMobile reads it back). A
+   media query cannot consume a custom property, so the literal below must
+   match this value — tests/test_mobile.py pins the two together. */
+:root { --wb-mobile-max: 768px; }
+
+/* Bottom tab bar: hidden on desktop, shown by the media query below. */
+.bottom-tabs { display: none; }
+.drawer-scrim { display: none; }
+
+@media (max-width: 768px) {
+  html, body { overflow: hidden; }
+
+  /* ---------- Title bar ---------- */
+  .titlebar {
+    grid-template-columns: auto 1fr auto;
+    padding-top: env(safe-area-inset-top, 0);
+    height: calc(44px + env(safe-area-inset-top, 0));
+  }
+  .titlebar-title { font-size: 14px; }
+  .menubar, .command-center { display: none; }
+  #btn-drawer, .drawer-btn { display: inline-flex !important; }
+  .conn-label { display: none; }
+
+  /* The Claude status bar needs ~560px for both meters and their clock
+     readouts; at phone width it would be clipped to a stub, so the footer
+     drops it instead. */
+  .cldbar-slot { display: none; }
+
+  /* ---------- Rail → bottom tab bar ---------- */
+  .activitybar { display: none; }
+  .bottom-tabs {
+    display: flex;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 40;
+    height: calc(52px + env(safe-area-inset-bottom, 0));
+    padding-bottom: env(safe-area-inset-bottom, 0);
+    background: var(--vsc-statusbar-bg, var(--bg-surface));
+    border-top: 1px solid var(--border);
+  }
+  .bottom-tabs button {
+    flex: 1;
+    min-height: 44px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    color: var(--text-secondary);
+    font-size: 10px;
+  }
+  .bottom-tabs button .codicon { font-size: 19px; }
+  .bottom-tabs button.active { color: var(--accent); }
+
+  /* ---------- Sidebar → drawer ---------- */
+  .workbench { position: relative; }
+  .sidebar {
+    position: fixed;
+    top: calc(44px + env(safe-area-inset-top, 0));
+    bottom: calc(52px + env(safe-area-inset-bottom, 0));
+    left: 0;
+    width: min(84vw, 340px);
+    min-width: 0;
+    z-index: 45;
+    display: flex;
+    transform: translateX(-102%);
+    transition: transform 0.18s ease;
+    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.35);
+  }
+  .sidebar.drawer-open { transform: translateX(0); visibility: visible; }
+  .sidebar.collapsed { transform: translateX(-102%); }
+  .workbench.no-sidebar .sidebar { display: none; }
+  .sidebar-resizer { display: none; }
+  .drawer-scrim {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 44;
+    background: rgba(0, 0, 0, 0.45);
+  }
+  .drawer-scrim.open { display: block; }
+
+  /* ---------- Main ---------- */
+  .main { padding-bottom: calc(52px + env(safe-area-inset-bottom, 0)); }
+  .tabstrip, .breadcrumbs { display: none; }
+  .statusbar { display: none; }
+
+  /* ---------- .sheet → full-screen sheet ---------- */
+  /* visibility, not transform distance, is what guarantees the closed sheet
+     is gone: the sheet is shorter than the space below its own top edge (the
+     bottom tab bar eats the difference), so translateY(100%) alone leaves a
+     sliver of it peeking above the tab bar. */
+  .sheet {
+    position: fixed;
+    inset: calc(44px + env(safe-area-inset-top, 0)) 0
+           calc(52px + env(safe-area-inset-bottom, 0)) 0;
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    z-index: 42;
+    background: var(--bg-base);
+    overflow-y: auto;
+    transform: translateY(100%);
+    visibility: hidden;
+    transition: transform 0.2s ease, visibility 0.2s ease;
+    border-left: none;
+  }
+  .sheet.sheet-open { transform: translateY(0); visibility: visible; }
+  .sheet-close { display: inline-flex !important; }
+
+  /* ---------- Touch targets and the 16px input rule ---------- */
+  .btn, .icon-btn, .region-head, .tree-row, .dropdown-item, .quickinput-item,
+  .help-tree .help-label, .statusbar-item {
+    min-height: 44px;
+  }
+  .btn, .icon-btn { display: inline-flex; align-items: center; }
+  .region-head { padding: 12px; font-size: 12px; }
+  input, select, textarea {
+    font-size: 16px !important;   /* below 16px, mobile Safari/Chrome zoom on focus */
+  }
+  .desktop-only { display: none !important; }
+
+  /* ---------- Modal → near-full-screen sheet ---------- */
+  .modal {
+    width: 100vw;
+    max-width: 100vw;
+    max-height: 92vh;
+    border-radius: 12px 12px 0 0;
+    margin-top: auto;
+  }
+  .modal-backdrop { align-items: flex-end; padding-top: 0; }
+  .quickinput-box { max-width: calc(100vw - 16px); }
+  .toast-host { right: 8px; left: 8px; bottom: calc(60px + env(safe-area-inset-bottom, 0)); }
+  .toast { width: auto; }
+
+  /* Terminals are for a glance on a phone, not for work. */
+  .term-frames { min-height: 60vh; }
+}
+
+@media (min-width: 769px) {
+  .mobile-only { display: none !important; }
+  .sheet-close { display: none !important; }
+}
+
+/* Very small phones: shrink the tab labels rather than wrap them. */
+@media (max-width: 380px) {
+  .bottom-tabs button span:not(.codicon) { font-size: 9px; }
+}

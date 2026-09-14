@@ -1,0 +1,8 @@
+# generated state — run.sh rebuilds all of it
+.venv*/
+__pycache__/
+*.pyc
+.pytest_cache/
+.coverage
+htmlcov/
+.gstack/

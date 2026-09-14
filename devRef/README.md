@@ -25,4 +25,6 @@ The design evolved through `plan0.md` (raw idea dump) → `plan1.md` →
 `plan2.md` (decisions locked, i3 implementation) → `plan3.md`
 (generalizing v2 beyond i3 to any Ubuntu desktop) → `plan4.md`
 (v3: replacing the fzf/alacritty/scratchpad stack with rofi) → `plan5.md`
-(v3.1: paste behavior — `auto_paste` and friends — moved into `config.yaml`).
+(v3.1: paste behavior — `auto_paste` and friends — moved into `config.yaml`)
+→ [`../plans/pasterFrontPlan.md`](../plans/pasterFrontPlan.md) (the front: a web
+control plane over `entries/` and `config.yaml`, 2026-09-14).

@@ -1,0 +1,53 @@
+/* ==========================================================================
+   4ColThems — theme toggle button
+   ==========================================================================
+   Styling for the single "cycle theme" button. Colors resolve from the
+   tokens in themes.css, so the button re-skins itself with the rest of the
+   UI. The markup it expects lives in snippets/toggle-button.html; the
+   behavior is wired by theme-toggle.js.
+
+   The button works with EITHER an inline <svg> (dependency-free, the
+   default this kit ships) OR a codicon <span> if your app already loads
+   the VS Code codicon font. Both are sized below.
+   ========================================================================== */
+
+.theme-switch {
+  display: inline-flex;
+  gap: 1px;
+}
+
+.theme-switch button {
+  width: 26px;
+  height: 22px;
+  border-radius: 5px;
+  color: var(--text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+/* icon sizing — works for both inline svg and codicon glyph */
+.theme-switch button svg { width: 14px; height: 14px; display: block; }
+.theme-switch button .codicon { font-size: 14px; }
+
+.theme-switch button:hover {
+  background: rgba(127, 127, 127, 0.18);
+  color: var(--text-primary);
+}
+
+/* .active = "this is the live theme" — tints the button with the accent */
+.theme-switch button.active {
+  color: var(--accent);
+  background: rgba(127, 127, 127, 0.14);
+}
+
+/* High-contrast: draw the active state with an outline instead of a fill. */
+:root[data-theme="hc"] .theme-switch button.active {
+  background: none;
+  outline: 1px solid var(--accent);
+  outline-offset: -2px;
+}

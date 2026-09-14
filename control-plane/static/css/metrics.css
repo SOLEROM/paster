@@ -1,0 +1,49 @@
+/* ==========================================================================
+   4ColThems — TIER 0: workbench metrics + typography  (OPTIONAL)
+   ==========================================================================
+   Geometry and font stacks for apps that reproduce a VS Code-shaped
+   workbench: a 35px custom title bar, a 22px status bar, a resizable side
+   bar, an activity bar down the left, a tab strip, breadcrumbs.
+
+   These are NOT colours. They do not change with the theme — which is
+   exactly why they live in their own file with a bare `:root` selector
+   instead of being repeated in all four palettes.
+
+   Ship this only if your app has that shape. A dashboard, a landing page or
+   a single-panel tool needs `themes.css` alone; every token here would sit
+   unused (harmless, but noise).
+
+   Provenance: resman, mentora, solGit and soldo each carried a
+   byte-identical copy of this block at the top of their own style.css. It
+   is the same VS Code 1.118.1 workbench the palettes come from — the values
+   are measured, not invented, so leave them alone unless you are matching a
+   new VS Code release.
+
+   Load order: metrics.css and themes.css are independent; both go before
+   your app CSS.
+       <link rel="stylesheet" href="/static/css/metrics.css" />
+       <link rel="stylesheet" href="/static/css/themes.css" />
+       <link rel="stylesheet" href="/static/css/app.css" />
+   ========================================================================== */
+
+:root {
+  /* ---------- Layout contract (the four surfaces every app lays out) ----- */
+  --header-h: 35px;            /* title bar (VS Code custom title bar) */
+  --status-h: 22px;            /* status bar (VS Code exact) */
+  --sidebar-w: 300px;          /* side bar incl. tree (VS Code default) */
+  --sidebar-min-w: 150px;      /* narrowest drag — still fits a section title */
+  --sidebar-max-w: 500px;      /* widest drag */
+
+  /* ---------- VS Code chrome extras ------------------------------------- */
+  --vsc-activitybar-w: 56px;   /* icon rail down the left edge */
+  --vsc-tabs-h: 35px;          /* editor tab strip */
+  --vsc-breadcrumb-h: 22px;    /* breadcrumb row under the tabs */
+
+  /* ---------- Type -------------------------------------------------------
+     VS Code's own Linux stacks. --vsc-font-mono is what a terminal, a diff
+     or a code block should use; xterm.js takes its font separately (it
+     cannot read CSS custom properties — see terminal-themes.json). */
+  --vsc-font-ui: system-ui, "Ubuntu", "Droid Sans", "Segoe UI", sans-serif;
+  --vsc-font-mono: "Droid Sans Mono", "Consolas", "Ubuntu Mono", ui-monospace, monospace;
+  --vsc-font-size: 13px;       /* VS Code workbench font size */
+}

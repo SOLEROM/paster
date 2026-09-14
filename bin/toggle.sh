@@ -4,19 +4,59 @@
 # there), assembles one rofi script-mode per entries/ tab plus a combi "ALL"
 # tab, renders the theme from config.yaml, and launches rofi.
 #
+#   toggle.sh              the hotkey target: show (or hide) the popup
+#   toggle.sh --list-tabs  dry run for the control plane: print one
+#                          "label<TAB>dir" line per tab exactly as rofi
+#                          would label it, then exit — no X11, no rofi.
+# PASTER_ENTRIES_DIR overrides the entries folder (tests, the front).
+#
 # Toggle-hide: while the popup is open rofi holds the keyboard grab, so the
 # i3 binding can't fire — the same hotkey is therefore also wired as
 # kb-cancel *inside* rofi. The pkill below only covers rare grab-less races.
 set -euo pipefail
 
 PASTER_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-ENTRIES_DIR="$PASTER_DIR/entries"
+ENTRIES_DIR="${PASTER_ENTRIES_DIR:-$PASTER_DIR/entries}"
 STATE_DIR="${XDG_RUNTIME_DIR:-/tmp}"
 PREV_WIN_FILE="$STATE_DIR/paster-prev-win"
 LAST_TAB_FILE="$STATE_DIR/paster-last-tab"
 RASI_FILE="$STATE_DIR/paster.rasi"
 
 source "$PASTER_DIR/bin/lib-config.sh"
+
+# ---- tabs: subfolders of entries/ containing a content.md, sorted by name.
+# Rescanned every toggle so new folders/edits show up without a reload.
+# Label = folder basename minus an optional NN_ ordering prefix; characters
+# that clash with rofi's -modi syntax are dropped, and labels colliding
+# after that get a numeric suffix so no tab silently disappears.
+scan_tabs() {  # fills labels[] and dirs[] (defined above, before the X work)
+  labels=() dirs=()
+  local -A seen=()
+  local d b
+  while IFS= read -r d; do
+    [[ -f "$d/content.md" ]] || continue
+    b="$(basename "$d")"
+    [[ "$b" =~ ^[0-9]+_ ]] && b="${b#*_}"
+    b="${b//[,:\'\"]/}"
+    [[ -z "$b" ]] && continue
+    if [[ -n "${seen[$b]:-}" ]]; then
+      seen[$b]=$(( seen[$b] + 1 ))
+      b="$b ${seen[$b]}"
+    fi
+    seen[$b]=1
+    labels+=("$b") dirs+=("$d")
+  done < <(find "$ENTRIES_DIR" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | sort)
+}
+# Dry run for the control plane (D4 of plans/pasterFrontPlan.md): the same
+# scan the popup does, printed instead of shown. Handled before the pkill,
+# the focus capture and rofi, so it needs no display at all. An empty
+# entries folder prints nothing and exits 0 — an empty list is an answer.
+labels=() dirs=()
+if [[ "${1:-}" == "--list-tabs" ]]; then
+  scan_tabs
+  for i in "${!labels[@]}"; do printf '%s\t%s\n' "${labels[i]}" "${dirs[i]}"; done
+  exit 0
+fi
 
 if pkill -f 'rofi .*/paster\.rasi' 2>/dev/null; then
   exit 0  # popup was open (grab-less edge case) — hotkey means hide
@@ -30,26 +70,8 @@ active_win="$(xdotool getactivewindow 2>/dev/null || true)"
 # of -modi command specs ('…' -> '…'\''…').
 sq_escape() { printf '%s' "${1//\'/\'\\\'\'}"; }
 
-# ---- tabs: subfolders of entries/ containing a content.md, sorted by name.
-# Rescanned every toggle so new folders/edits show up without a reload.
-# Label = folder basename minus an optional NN_ ordering prefix; characters
-# that clash with rofi's -modi syntax are dropped, and labels colliding
-# after that get a numeric suffix so no tab silently disappears.
-labels=() dirs=()
-declare -A seen=()
-while IFS= read -r d; do
-  [[ -f "$d/content.md" ]] || continue
-  b="$(basename "$d")"
-  [[ "$b" =~ ^[0-9]+_ ]] && b="${b#*_}"
-  b="${b//[,:\'\"]/}"
-  [[ -z "$b" ]] && continue
-  if [[ -n "${seen[$b]:-}" ]]; then
-    seen[$b]=$(( seen[$b] + 1 ))
-    b="$b ${seen[$b]}"
-  fi
-  seen[$b]=1
-  labels+=("$b") dirs+=("$d")
-done < <(find "$ENTRIES_DIR" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | sort)
+# ---- tabs (scanned by scan_tabs, defined above)
+scan_tabs
 
 if (( ${#labels[@]} == 0 )); then
   rofi -e "paster: no tabs found — create entries/<TabName>/content.md under $ENTRIES_DIR" \

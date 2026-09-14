@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en"
+      data-app="{{ app_name }}"
+      data-theme-key="{{ app_name }}-theme"
+      data-theme-icons="codicon">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1, viewport-fit=cover,
+                 interactive-widget=resizes-content" />
+  <meta name="theme-color" content="#1f1f1f" />
+  <title>{{ app_name }}</title>
+
+  <!-- Pre-paint guard: synchronous, a real file (CSP: script-src 'self'). -->
+  <script src="/static/js/theme-boot.js?v={{ asset_rev }}"></script>
+
+  <!-- 4ColThems tokens, then the vsCodeFront workbench, then this app. -->
+  <link rel="stylesheet" href="/static/css/metrics.css?v={{ asset_rev }}" />
+  <link rel="stylesheet" href="/static/css/themes.css?v={{ asset_rev }}" />
+  <link rel="stylesheet" href="/static/css/theme-toggle.css?v={{ asset_rev }}" />
+  <link rel="stylesheet" href="/static/css/codicons.css?v={{ asset_rev }}" />
+  <link rel="stylesheet" href="/static/css/workbench.css?v={{ asset_rev }}" />
+  <link rel="stylesheet" href="/static/css/components.css?v={{ asset_rev }}" />
+  <link rel="stylesheet" href="/static/css/mobile.css?v={{ asset_rev }}" />
+  <link rel="stylesheet" href="/static/css/app.css?v={{ asset_rev }}" />
+  {% if use_webterm %}
+  <link rel="stylesheet" href="/webterm/static/webterm.css" />
+  {% endif %}
+
+  <script defer src="/static/vendor/socket.io.min.js?v={{ asset_rev }}"></script>
+  <script defer src="/static/vendor/marked.min.js?v={{ asset_rev }}"></script>
+  <script defer src="/static/vendor/purify.min.js?v={{ asset_rev }}"></script>
+  <script defer src="/static/js/theme-toggle.js?v={{ asset_rev }}"></script>
+  <script defer src="/static/js/wb-core.js?v={{ asset_rev }}"></script>
+  <script defer src="/static/js/wb-shell.js?v={{ asset_rev }}"></script>
+  <script defer src="/static/js/wb-overlays.js?v={{ asset_rev }}"></script>
+  <script defer src="/static/js/wb-mobile.js?v={{ asset_rev }}"></script>
+  <!-- cldBar: the kit copy-in, then this app's glue (mount point + theme map). -->
+  <script defer src="/static/js/cldbar.js?v={{ asset_rev }}"></script>
+  <script defer src="/static/js/cldbar-glue.js?v={{ asset_rev }}"></script>
+  <!-- App modules, one per view, then the boot file last. -->
+  <script defer src="/static/js/tabs.js?v={{ asset_rev }}"></script>
+  <script defer src="/static/js/entries.js?v={{ asset_rev }}"></script>
+  <script defer src="/static/js/config.js?v={{ asset_rev }}"></script>
+  <script defer src="/static/js/doctor.js?v={{ asset_rev }}"></script>
+  <script defer src="/static/js/help.js?v={{ asset_rev }}"></script>
+  <script defer src="/static/js/main.js?v={{ asset_rev }}"></script>
+  {% if use_webterm %}
+  <script type="module" src="/static/js/webterm-glue.js?v={{ asset_rev }}"></script>
+  {% endif %}
+</head>
+<body>
+
+<header class="titlebar">
+  <div class="titlebar-left">
+    <button class="icon-btn drawer-btn" id="btn-drawer" style="display:none"
+            title="Show the sidebar" aria-label="Open the sidebar">
+      <span class="codicon codicon-list-unordered"></span></button>
+    <span class="brand" title="Show or hide the sidebar"><span class="codicon codicon-note"></span></span>
+    <span class="titlebar-title">{{ app_name }}</span>
+  </div>
+  <div class="titlebar-center">
+    <button class="btn btn-sm popup-launch" id="btn-popup-open" disabled
+            title="Open the real popup — runs bin/toggle.sh on the laptop's screen">
+      <span class="codicon codicon-play"></span><span class="popup-launch-label">Open popup</span><span class="popup-launch-short">Popup</span></button>
+    <span class="summary-strip" id="summary-strip" hidden></span>
+  </div>
+  <div class="titlebar-right">
+    <span class="conn-pill connecting" id="conn-pill" role="button" tabindex="0"
+          title="Server connection">
+      <span class="conn-dot" id="conn-dot"></span>
+      <span class="conn-label" id="conn-label">connecting...</span>
+    </span>
+    <div class="theme-switch" id="theme-switch" role="group" aria-label="Theme">
+      <button id="theme-cycle" title="Theme" aria-label="Cycle theme">
+        <span id="theme-cycle-icon"></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="workbench">
+  <nav class="activitybar" id="activity-bar" aria-label="Views">
+    <div class="activity-group">
+      <button class="activity-item" data-view="entries" title="Entries — the tabs and their lines">
+        <span class="codicon codicon-list-unordered"></span>
+        <span class="activity-badge" id="entries-badge" hidden></span>
+        <span class="activity-label">Entries</span>
+      </button>
+      <button class="activity-item" data-view="doctor" data-sidebar="0" title="Doctor — install state and dependencies">
+        <span class="codicon codicon-pulse"></span>
+        <span class="activity-badge" id="doctor-badge" hidden></span>
+        <span class="activity-label">Doctor</span>
+      </button>
+      <button class="activity-item" data-view="sessions" data-sidebar="0" title="Sessions — a shell in the repo">
+        <span class="codicon codicon-terminal"></span>
+        <span class="activity-label">Sessions</span>
+      </button>
+    </div>
+    <div class="activity-group activity-bottom">
+      <button class="activity-item" data-view="config" data-sidebar="0" title="Config — config.yaml">
+        <span class="codicon codicon-settings-gear"></span>
+        <span class="activity-badge" id="config-badge" hidden></span>
+        <span class="activity-label">Config</span>
+      </button>
+      <button class="activity-item" data-view="help" data-sidebar="0" title="Help">
+        <span class="codicon codicon-question"></span>
+        <span class="activity-label">Help</span>
+      </button>
+    </div>
+  </nav>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-filter">
+      <input id="tree-search" type="search" placeholder="Search every tab (ALL)..." autocomplete="off" />
+    </div>
+    <div class="sidebar-tree-head" id="tree-head">
+      <span class="sidebar-tree-title">Tabs</span>
+      <span class="tree-tag" id="tree-count"></span>
+      <span class="tree-header-actions">
+        <button id="btn-tab-new" class="icon-btn" title="New tab"><span class="codicon codicon-new-folder"></span></button>
+      </span>
+    </div>
+    <div id="tree" class="tree" role="tree"></div>
+    <div id="tree-ignored" class="tree-ignored muted small" hidden></div>
+  </aside>
+  <div class="sidebar-resizer" id="sidebar-resizer" role="separator"
+       aria-orientation="vertical" tabindex="0" aria-label="Resize the sidebar"
+       title="Drag to resize · double-click to reset width"></div>
+
+  <main class="main">
+    <div class="tabstrip" data-tabs="single"><div class="tabs" role="tablist"></div></div>
+    <div class="panels">
+
+      <section id="panel-entries" class="tab-panel" role="tabpanel">
+        <div class="toolbar">
+          <button class="btn btn-sm" id="btn-entry-add"><span class="codicon codicon-add"></span>Add</button>
+          <button class="btn btn-sm secondary" id="btn-entry-paste" title="Add several entries at once, one per line">
+            <span class="codicon codicon-note"></span>Paste many</button>
+          <button class="btn btn-sm secondary" id="btn-entry-sort" title="Sort this tab's entries A→Z (undo through History)">
+            <span class="codicon codicon-arrow-swap"></span>Sort A→Z</button>
+          <input id="entries-filter" type="search" class="toolbar-input" placeholder="Filter this tab..." autocomplete="off" />
+          <div class="spacer"></div>
+          <span class="muted small" id="entries-count"></span>
+          <button id="btn-entry-history" class="icon-btn" title="History of this tab's file"><span class="codicon codicon-history"></span></button>
+          <button id="btn-entries-refresh" class="icon-btn" title="Reload"><span class="codicon codicon-refresh"></span></button>
+        </div>
+        <div class="dash-body" id="entries-body"></div>
+      </section>
+
+      <section id="panel-doctor" class="tab-panel" role="tabpanel">
+        <div class="toolbar">
+          <span class="muted small" id="doctor-summary"></span>
+          <div class="spacer"></div>
+          <span id="doctor-actions" class="toolbar-group"></span>
+          <button id="btn-doctor-refresh" class="icon-btn" title="Re-run the checks"><span class="codicon codicon-refresh"></span></button>
+        </div>
+        <div class="dash-body doctor-layout">
+          <div id="doctor-body"></div>
+          <div class="log-view doctor-output" id="doctor-output" hidden></div>
+        </div>
+      </section>
+
+      <section id="panel-sessions" class="tab-panel" role="tabpanel">
+        <div class="terminal-panel">
+          {% if use_webterm %}
+          <div class="toolbar sessions-toolbar">
+            <button class="btn btn-sm" id="btn-shell-repo" title="Open a new shell in the paster checkout">
+              <span class="codicon codicon-terminal"></span>Shell in the repo</button>
+            <code class="muted small sessions-cwd" title="The checkout every session starts in">{{ repo_root }}</code>
+            <div class="spacer"></div>
+          </div>
+          <div class="term-frames"><div id="webterm-root" class="webterm-mount"></div></div>
+          {% else %}
+          <div class="term-frames"><div class="term-empty">
+            <span class="codicon codicon-terminal"></span>
+            <p>No terminal: solBench/webterm is not installed in this venv
+               (run.sh installs it from the sibling solBench checkout).</p></div></div>
+          {% endif %}
+        </div>
+      </section>
+
+      <section id="panel-config" class="tab-panel" role="tabpanel">
+        <div class="toolbar">
+          <span class="cfg-mode-switch" role="group" aria-label="Editor mode">
+            <button class="btn btn-sm" id="btn-cfg-form">Form</button>
+            <button class="btn btn-sm secondary" id="btn-cfg-raw">Raw</button>
+          </span>
+          <input id="cfg-search" type="search" class="toolbar-input" placeholder="Search settings..." autocomplete="off" />
+          <div class="spacer"></div>
+          <span class="muted small" id="config-status"></span>
+          <button class="icon-btn" id="btn-config-history" title="History — earlier versions of config.yaml"><span class="codicon codicon-history"></span></button>
+          <button class="btn btn-sm secondary" id="btn-config-discard" disabled>Discard</button>
+          <button class="btn btn-sm" id="btn-config-save" disabled><span class="codicon codicon-save"></span>Save</button>
+        </div>
+        <div id="hotkey-banner" class="banner warn" hidden></div>
+        <div id="config-warnings" class="banner warn" hidden></div>
+        <div class="cfg-layout" id="cfg-layout">
+          <nav class="cfg-nav" id="cfg-nav"></nav>
+          <div class="cfg-content" id="cfg-content"></div>
+          <div class="cfg-yaml" id="cfg-raw-wrap" hidden>
+            <textarea id="cfg-raw" spellcheck="false" aria-label="config.yaml"></textarea>
+          </div>
+        </div>
+      </section>
+
+      <section id="panel-help" class="tab-panel" role="tabpanel">
+        <div class="docs help-layout">
+          <aside class="docs-tree help-tree" id="help-tree">
+            <div class="docs-tree-header">
+              <span class="docs-tree-toggle" id="help-tree-toggle" role="button" tabindex="0"
+                    aria-expanded="true" title="Show or hide the page list">Help</span>
+              <span class="tree-header-actions">
+                <button id="btn-help-refresh" class="icon-btn" title="Reload docs">
+                  <span class="codicon codicon-refresh"></span></button>
+              </span>
+            </div>
+            <div id="help-tree-list" class="docs-tree-body"></div>
+          </aside>
+          <div class="docs-body markdown-body help-content" id="help-content">
+            <p class="muted">Loading help…</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<footer class="statusbar" id="status-bar">
+  <div class="statusbar-side" id="status-left">
+    <span class="statusbar-item remote" id="app-item" role="button" tabindex="0"
+          title="Show or hide the sidebar">
+      <span class="codicon codicon-note"></span><span>{{ app_name }}</span>
+    </span>
+    <span class="cldbar-slot" id="cldbar-slot" data-remdev-url="{{ remdev_url }}"></span>
+  </div>
+  <div class="statusbar-side" id="status-right">
+    <span class="statusbar-item" id="status-display" title="Desktop actions"></span>
+    <button type="button" class="statusbar-item" id="btn-activity-log" title="Activity log">
+      <span class="codicon codicon-output"></span><span>Log</span>
+      <span class="log-dot" id="activity-log-dot" hidden></span>
+    </button>
+  </div>
+</footer>
+
+<nav class="bottom-tabs" id="bottom-tabs" aria-label="Views"></nav>
+<div class="drawer-scrim" id="drawer-scrim"></div>
+
+<div class="modal-backdrop" id="modal-backdrop" hidden>
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-title"></span>
+      <button class="icon-btn" id="modal-close" title="Close" aria-label="Close">
+        <span class="codicon codicon-close"></span></button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-footer" id="modal-footer"></div>
+  </div>
+</div>
+<div class="quickinput" id="quickinput" hidden>
+  <div class="quickinput-box">
+    <input type="text" id="quickinput-input" placeholder="Search entries, views and commands"
+           spellcheck="false" autocomplete="off" aria-label="Quick open" />
+    <div class="quickinput-list" id="quickinput-list" role="listbox"></div>
+  </div>
+</div>
+<div class="dropdown" id="dropdown" role="menu" hidden></div>
+<div class="toast-host" id="toast-host" aria-live="polite"></div>
+
+</body>
+</html>

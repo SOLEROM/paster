@@ -1,0 +1,559 @@
+/* ==========================================================================
+   4ColThems — the four color plates
+   ==========================================================================
+   Drop this file into any web app and you get four fully-defined color
+   themes selected by a single attribute on the <html> element:
+
+       <html data-theme="dark">     ← VS Code "Dark Modern"   (default)
+       <html data-theme="light">    ← VS Code "Light Modern"
+       <html data-theme="hc">       ← VS Code "Dark High Contrast"
+       <html data-theme="green">    ← "Garage" phosphor-green terminal
+
+   Nothing here paints anything on its own — every block only *defines
+   CSS custom properties*. Your app's CSS reads those properties
+   (var(--bg-base), var(--accent), ...) so switching the attribute
+   re-skins the whole UI with zero JS beyond flipping the attribute.
+
+   ------------------------------------------------------------------
+   TWO TIERS OF TOKENS
+   ------------------------------------------------------------------
+   1. THE CONTRACT (generic, portable) — the tokens every app should
+      build against. Semantic names, no product coupling:
+        --bg-base --bg-surface --bg-elevated --bg-hover
+        --border --border-light
+        --text-primary --text-secondary --text-muted
+        --accent --accent-bg
+        --success --warning --danger --info
+        --status-running --status-stopped --status-warn --status-idle
+      If you only style your app against THESE, the kit is fully portable
+      and every one of the four themes just works.
+
+   2. VS CODE CHROME EXTENSION TOKENS (--vsc-*) — extra granularity for
+      apps that reproduce a VS Code-style workbench (distinct title bar /
+      side bar / tabs / status bar / menus / buttons / scrollbars). Each
+      maps 1:1 to a VS Code workbench color id (noted in the comment).
+      Ignore this tier if you don't need that fidelity — it costs nothing
+      when unused.
+
+   Colors were extracted from a real VS Code 1.118.1 install
+   (theme-defaults themes: Dark Modern / Light Modern / Dark High Contrast).
+   The "green" theme is ported from the Garage phosphor-green design system.
+
+   See CLAUDE.md for the drop-in / deploy recipe and reference/tokens.md
+   for the full token table.
+   ========================================================================== */
+
+
+/* ==========================================================================
+   THEME: dark — VS Code "Dark Modern"  (also the default when no/unknown
+   data-theme is present — note the bare :root selector)
+   ========================================================================== */
+:root,
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* ----- contract ----- */
+  --bg-base: #1f1f1f;          /* editor.background */
+  --bg-surface: #181818;       /* sideBar/panel/statusBar/titleBar.background */
+  --bg-elevated: #313131;      /* input.background */
+  --bg-hover: #2a2d2e;         /* list.hoverBackground */
+
+  --border: #2b2b2b;           /* sideBar.border / panel.border / tab.border */
+  --border-light: #252525;     /* subtler divider (between rows/cards) */
+
+  --text-primary: #cccccc;     /* foreground */
+  --text-secondary: #9d9d9d;   /* descriptionForeground */
+  --text-muted: #6e7681;       /* editorLineNumber.foreground */
+
+  --accent: #0078d4;           /* focusBorder / button.background */
+  --accent-bg: #04395e;        /* list.activeSelectionBackground */
+  --success: #2ea043;          /* editorGutter.addedBackground */
+  --warning: #cca700;          /* editorWarning.foreground */
+  --danger: #f85149;           /* errorForeground */
+  --info: #3794ff;             /* notificationsInfoIcon.foreground */
+
+  --status-running: var(--success);
+  --status-stopped: var(--danger);
+  --status-warn: var(--warning);
+  --status-idle: #6e7681;
+
+  /* ----- VS Code chrome extension tokens ----- */
+  --vsc-focus-border: #0078d4;                 /* focusBorder */
+  --vsc-contrast-active: transparent;          /* contrastActiveBorder (HC only) */
+
+  --vsc-titlebar-bg: #181818;                  /* titleBar.activeBackground */
+  --vsc-titlebar-fg: #cccccc;                  /* titleBar.activeForeground */
+
+  --vsc-activitybar-bg: #181818;               /* activityBar.background */
+  --vsc-activitybar-fg: #d7d7d7;               /* activityBar.foreground */
+  --vsc-activitybar-inactive-fg: #868686;      /* activityBar.inactiveForeground */
+  --vsc-activitybar-active-border: #0078d4;    /* activityBar.activeBorder */
+  --vsc-activitybar-badge-bg: #0078d4;         /* activityBarBadge.background */
+  --vsc-activitybar-badge-fg: #ffffff;         /* activityBarBadge.foreground */
+
+  --vsc-sidebar-bg: #181818;                   /* sideBar.background */
+  --vsc-sidebar-fg: #cccccc;                   /* sideBar.foreground */
+  --vsc-sidebar-title-fg: #cccccc;             /* sideBarTitle.foreground */
+  --vsc-sidebar-section-border: #2b2b2b;       /* sideBarSectionHeader.border */
+
+  --vsc-tabs-bg: #181818;                      /* editorGroupHeader.tabsBackground */
+  --vsc-tab-active-bg: #1f1f1f;                /* tab.activeBackground */
+  --vsc-tab-active-fg: #ffffff;                /* tab.activeForeground */
+  --vsc-tab-inactive-bg: #181818;              /* tab.inactiveBackground */
+  --vsc-tab-inactive-fg: #9d9d9d;              /* tab.inactiveForeground */
+  --vsc-tab-hover-bg: #1f1f1f;                 /* tab.hoverBackground */
+  --vsc-tab-active-border-top: #0078d4;        /* tab.activeBorderTop */
+  --vsc-tab-border: #2b2b2b;                   /* tab.border */
+
+  --vsc-panel-bg: #181818;                     /* panel.background */
+  --vsc-panel-title-active-fg: #cccccc;        /* panelTitle.activeForeground */
+  --vsc-panel-title-inactive-fg: #9d9d9d;      /* panelTitle.inactiveForeground */
+  --vsc-panel-title-active-border: #0078d4;    /* panelTitle.activeBorder */
+
+  --vsc-statusbar-bg: #181818;                 /* statusBar.background */
+  --vsc-statusbar-fg: #cccccc;                 /* statusBar.foreground */
+  --vsc-statusbar-border: #2b2b2b;             /* statusBar.border */
+  --vsc-statusbar-item-hover-bg: #f1f1f133;    /* statusBarItem.hoverBackground */
+  --vsc-statusbar-remote-bg: #0078d4;          /* statusBarItem.remoteBackground */
+  --vsc-statusbar-remote-fg: #ffffff;          /* statusBarItem.remoteForeground */
+
+  --vsc-input-bg: #313131;                     /* input.background */
+  --vsc-input-fg: #cccccc;                     /* input.foreground */
+  --vsc-input-border: #3c3c3c;                 /* input.border */
+  --vsc-input-placeholder: #989898;            /* input.placeholderForeground */
+  --vsc-dropdown-bg: #313131;                  /* dropdown.background */
+  --vsc-dropdown-border: #3c3c3c;              /* dropdown.border */
+  --vsc-dropdown-list-bg: #1f1f1f;             /* dropdown.listBackground */
+
+  --vsc-btn-bg: #0078d4;                       /* button.background */
+  --vsc-btn-fg: #ffffff;                       /* button.foreground */
+  --vsc-btn-hover-bg: #026ec1;                 /* button.hoverBackground */
+  --vsc-btn-border: #ffffff1a;                 /* button.border */
+  --vsc-btn2-bg: transparent;                  /* button.secondaryBackground */
+  --vsc-btn2-fg: #cccccc;                      /* button.secondaryForeground */
+  --vsc-btn2-hover-bg: #2b2b2b;                /* button.secondaryHoverBackground */
+  --vsc-btn2-border: #3c3c3c;
+
+  --vsc-list-hover-bg: #2a2d2e;                /* list.hoverBackground */
+  --vsc-list-active-bg: #04395e;               /* list.activeSelectionBackground */
+  --vsc-list-active-fg: #ffffff;               /* list.activeSelectionForeground */
+  --vsc-list-inactive-bg: #37373d;             /* list.inactiveSelectionBackground */
+  --vsc-list-focus-outline: #0078d4;           /* list.focusOutline */
+
+  --vsc-badge-bg: #616161;                     /* badge.background */
+  --vsc-badge-fg: #f8f8f8;                     /* badge.foreground */
+
+  --vsc-menu-bg: #1f1f1f;                      /* menu.background */
+  --vsc-menu-fg: #cccccc;                      /* menu.foreground */
+  --vsc-menu-border: #454545;                  /* menu.border */
+  --vsc-menu-sel-bg: #0078d4;                  /* menu.selectionBackground */
+  --vsc-menu-sel-fg: #ffffff;                  /* menu.selectionForeground */
+  --vsc-menu-separator: #454545;               /* menu.separatorBackground */
+
+  --vsc-widget-bg: #202020;                    /* editorWidget.background */
+  --vsc-widget-border: #313131;                /* widget.border */
+  --vsc-widget-shadow: 0 0 8px 2px rgba(0, 0, 0, 0.36); /* widget.shadow */
+  --vsc-quickinput-bg: #222222;                /* quickInput.background */
+
+  --vsc-link: #4daafc;                         /* textLink.foreground */
+  --vsc-code-bg: #2b2b2b;                      /* textCodeBlock.background */
+  --vsc-blockquote-bg: #2b2b2b;                /* textBlockQuote.background */
+  --vsc-blockquote-border: #616161;            /* textBlockQuote.border */
+
+  --vsc-progress: #0078d4;                     /* progressBar.background */
+
+  --vsc-scrollbar: #79797966;                  /* scrollbarSlider.background */
+  --vsc-scrollbar-hover: #646464b3;            /* scrollbarSlider.hoverBackground */
+  --vsc-scrollbar-active: #bfbfbf66;           /* scrollbarSlider.activeBackground */
+}
+
+
+/* ==========================================================================
+   THEME: light — VS Code "Light Modern"
+   ========================================================================== */
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  /* ----- contract ----- */
+  --bg-base: #ffffff;          /* editor.background */
+  --bg-surface: #f8f8f8;       /* sideBar/panel/statusBar/titleBar.background */
+  --bg-elevated: #f3f3f3;      /* welcomePage.tileBackground */
+  --bg-hover: #f2f2f2;         /* list.hoverBackground */
+
+  --border: #e5e5e5;           /* sideBar.border / panel.border / tab.border */
+  --border-light: #ececec;
+
+  --text-primary: #3b3b3b;     /* foreground */
+  --text-secondary: #616161;   /* activityBar.inactiveForeground */
+  --text-muted: #868686;       /* tab.inactiveForeground */
+
+  --accent: #005fb8;           /* focusBorder / button.background */
+  --accent-bg: #e8e8e8;        /* list.activeSelectionBackground */
+  --success: #2ea043;          /* editorGutter.addedBackground */
+  --warning: #bf8803;          /* editorWarning.foreground */
+  --danger: #c72e0f;           /* statusBarItem.errorBackground */
+  --info: #1a85ff;             /* notificationsInfoIcon.foreground */
+
+  --status-running: var(--success);
+  --status-stopped: var(--danger);
+  --status-warn: var(--warning);
+  --status-idle: #868686;
+
+  /* ----- VS Code chrome extension tokens ----- */
+  --vsc-focus-border: #005fb8;
+  --vsc-contrast-active: transparent;
+
+  --vsc-titlebar-bg: #f8f8f8;
+  --vsc-titlebar-fg: #1e1e1e;
+
+  --vsc-activitybar-bg: #f8f8f8;
+  --vsc-activitybar-fg: #1f1f1f;
+  --vsc-activitybar-inactive-fg: #616161;
+  --vsc-activitybar-active-border: #005fb8;
+  --vsc-activitybar-badge-bg: #005fb8;
+  --vsc-activitybar-badge-fg: #ffffff;
+
+  --vsc-sidebar-bg: #f8f8f8;
+  --vsc-sidebar-fg: #3b3b3b;
+  --vsc-sidebar-title-fg: #3b3b3b;
+  --vsc-sidebar-section-border: #e5e5e5;
+
+  --vsc-tabs-bg: #f8f8f8;
+  --vsc-tab-active-bg: #ffffff;
+  --vsc-tab-active-fg: #3b3b3b;
+  --vsc-tab-inactive-bg: #f8f8f8;
+  --vsc-tab-inactive-fg: #868686;
+  --vsc-tab-hover-bg: #ffffff;
+  --vsc-tab-active-border-top: #005fb8;
+  --vsc-tab-border: #e5e5e5;
+
+  --vsc-panel-bg: #f8f8f8;
+  --vsc-panel-title-active-fg: #3b3b3b;
+  --vsc-panel-title-inactive-fg: #3b3b3b;
+  --vsc-panel-title-active-border: #005fb8;
+
+  --vsc-statusbar-bg: #f8f8f8;
+  --vsc-statusbar-fg: #3b3b3b;
+  --vsc-statusbar-border: #e5e5e5;
+  --vsc-statusbar-item-hover-bg: #1f1f1f11;
+  --vsc-statusbar-remote-bg: #005fb8;
+  --vsc-statusbar-remote-fg: #ffffff;
+
+  --vsc-input-bg: #ffffff;
+  --vsc-input-fg: #3b3b3b;
+  --vsc-input-border: #cecece;
+  --vsc-input-placeholder: #767676;
+  --vsc-dropdown-bg: #ffffff;
+  --vsc-dropdown-border: #cecece;
+  --vsc-dropdown-list-bg: #ffffff;
+
+  --vsc-btn-bg: #005fb8;
+  --vsc-btn-fg: #ffffff;
+  --vsc-btn-hover-bg: #0258a8;
+  --vsc-btn-border: #0000001a;
+  --vsc-btn2-bg: #e5e5e5;
+  --vsc-btn2-fg: #3b3b3b;
+  --vsc-btn2-hover-bg: #cccccc;
+  --vsc-btn2-border: #0000001a;
+
+  --vsc-list-hover-bg: #f2f2f2;
+  --vsc-list-active-bg: #e8e8e8;
+  --vsc-list-active-fg: #000000;
+  --vsc-list-inactive-bg: #e4e6f1;
+  --vsc-list-focus-outline: #005fb8;
+
+  --vsc-badge-bg: #cccccc;
+  --vsc-badge-fg: #3b3b3b;
+
+  --vsc-menu-bg: #ffffff;
+  --vsc-menu-fg: #3b3b3b;
+  --vsc-menu-border: #cecece;
+  --vsc-menu-sel-bg: #005fb8;
+  --vsc-menu-sel-fg: #ffffff;
+  --vsc-menu-separator: #d4d4d4;
+
+  --vsc-widget-bg: #f8f8f8;
+  --vsc-widget-border: #e5e5e5;
+  --vsc-widget-shadow: 0 0 8px 2px rgba(0, 0, 0, 0.16);
+  --vsc-quickinput-bg: #f8f8f8;
+
+  --vsc-link: #005fb8;
+  --vsc-code-bg: #f8f8f8;
+  --vsc-blockquote-bg: #f8f8f8;
+  --vsc-blockquote-border: #e5e5e5;
+
+  --vsc-progress: #005fb8;
+
+  --vsc-scrollbar: #64646466;
+  --vsc-scrollbar-hover: #646464b3;
+  --vsc-scrollbar-active: #00000099;
+}
+
+
+/* ==========================================================================
+   THEME: hc — VS Code "Dark High Contrast"
+   Backgrounds are pure black; structure is drawn with #6fc3df borders and
+   active/focus states with the signature #f38518 orange. Selection is
+   outline-based rather than filled — see the ::selection override below.
+   ========================================================================== */
+:root[data-theme="hc"] {
+  color-scheme: dark;
+
+  /* ----- contract ----- */
+  --bg-base: #000000;
+  --bg-surface: #000000;
+  --bg-elevated: #000000;
+  --bg-hover: #0f0f0f;
+
+  --border: #6fc3df;           /* contrastBorder */
+  --border-light: #6fc3df;
+
+  --text-primary: #ffffff;
+  --text-secondary: #ffffff;
+  --text-muted: #a5a5a5;
+
+  --accent: #f38518;           /* contrastActiveBorder / focusBorder */
+  --accent-bg: #000000;        /* HC selection is outline-based, not fill */
+  --success: #89d185;          /* debugIcon/testing green (HC-legible) */
+  --warning: #ffcc00;
+  --danger: #f48771;
+  --info: #75beff;
+
+  --status-running: var(--success);
+  --status-stopped: var(--danger);
+  --status-warn: var(--warning);
+  --status-idle: #a5a5a5;
+
+  /* ----- VS Code chrome extension tokens ----- */
+  --vsc-focus-border: #f38518;
+  --vsc-contrast-active: #f38518;
+
+  --vsc-titlebar-bg: #000000;
+  --vsc-titlebar-fg: #ffffff;
+
+  --vsc-activitybar-bg: #000000;
+  --vsc-activitybar-fg: #ffffff;
+  --vsc-activitybar-inactive-fg: #ffffff;
+  --vsc-activitybar-active-border: #f38518;
+  --vsc-activitybar-badge-bg: #0078d4;
+  --vsc-activitybar-badge-fg: #ffffff;
+
+  --vsc-sidebar-bg: #000000;
+  --vsc-sidebar-fg: #ffffff;
+  --vsc-sidebar-title-fg: #ffffff;
+  --vsc-sidebar-section-border: #6fc3df;
+
+  --vsc-tabs-bg: #000000;
+  --vsc-tab-active-bg: #000000;
+  --vsc-tab-active-fg: #ffffff;
+  --vsc-tab-inactive-bg: #000000;
+  --vsc-tab-inactive-fg: #ffffff;
+  --vsc-tab-hover-bg: #000000;
+  --vsc-tab-active-border-top: #f38518;
+  --vsc-tab-border: #6fc3df;
+
+  --vsc-panel-bg: #000000;
+  --vsc-panel-title-active-fg: #ffffff;
+  --vsc-panel-title-inactive-fg: #ffffff;
+  --vsc-panel-title-active-border: #f38518;
+
+  --vsc-statusbar-bg: #000000;
+  --vsc-statusbar-fg: #ffffff;
+  --vsc-statusbar-border: #6fc3df;
+  --vsc-statusbar-item-hover-bg: #0f0f0f;
+  --vsc-statusbar-remote-bg: #000000;
+  --vsc-statusbar-remote-fg: #ffffff;
+
+  --vsc-input-bg: #000000;
+  --vsc-input-fg: #ffffff;
+  --vsc-input-border: #6fc3df;
+  --vsc-input-placeholder: #a5a5a5;
+  --vsc-dropdown-bg: #000000;
+  --vsc-dropdown-border: #6fc3df;
+  --vsc-dropdown-list-bg: #000000;
+
+  --vsc-btn-bg: #000000;
+  --vsc-btn-fg: #ffffff;
+  --vsc-btn-hover-bg: #0f0f0f;
+  --vsc-btn-border: #6fc3df;
+  --vsc-btn2-bg: #000000;
+  --vsc-btn2-fg: #ffffff;
+  --vsc-btn2-hover-bg: #0f0f0f;
+  --vsc-btn2-border: #6fc3df;
+
+  --vsc-list-hover-bg: #0f0f0f;
+  --vsc-list-active-bg: #000000;
+  --vsc-list-active-fg: #ffffff;
+  --vsc-list-inactive-bg: #000000;
+  --vsc-list-focus-outline: #f38518;
+
+  --vsc-badge-bg: #000000;
+  --vsc-badge-fg: #ffffff;
+
+  --vsc-menu-bg: #000000;
+  --vsc-menu-fg: #ffffff;
+  --vsc-menu-border: #6fc3df;
+  --vsc-menu-sel-bg: #000000;
+  --vsc-menu-sel-fg: #ffffff;
+  --vsc-menu-separator: #6fc3df;
+
+  --vsc-widget-bg: #000000;
+  --vsc-widget-border: #6fc3df;
+  --vsc-widget-shadow: none;
+  --vsc-quickinput-bg: #0c0c0c;
+
+  --vsc-link: #21a6ff;
+  --vsc-code-bg: #000000;
+  --vsc-blockquote-bg: #000000;
+  --vsc-blockquote-border: #6fc3df;
+
+  --vsc-progress: #f38518;
+
+  --vsc-scrollbar: #6fc3df66;
+  --vsc-scrollbar-hover: #6fc3dfb3;
+  --vsc-scrollbar-active: #6fc3df;
+}
+
+
+/* ==========================================================================
+   THEME: green — "Garage" phosphor-green terminal skin
+   Dark, green-tinted surfaces with a phosphor-green (#36c97a) accent.
+   ========================================================================== */
+:root[data-theme="green"] {
+  color-scheme: dark;
+
+  /* ----- contract ----- */
+  --bg-base: #0c120e;          /* main canvas */
+  --bg-surface: #0a0f0c;       /* chrome: sidebar/status/title */
+  --bg-elevated: #101711;      /* raised card/input */
+  --bg-hover: #141d16;         /* card-hover */
+
+  --border: #1d2a21;
+  --border-light: #16201a;     /* subtler divider */
+
+  --text-primary: #d6e8da;
+  --text-secondary: #7f9584;
+  --text-muted: #4d5e51;
+
+  --accent: #36c97a;           /* phosphor-green primary accent */
+  --accent-bg: #123524;        /* dark-green selection fill */
+  --success: #36c97a;
+  --warning: #e9b97a;
+  --danger: #ff6b66;
+  --info: #45d8e0;             /* cyan */
+
+  --status-running: var(--success);
+  --status-stopped: var(--danger);
+  --status-warn: var(--warning);
+  --status-idle: #7f9584;
+
+  /* ----- VS Code chrome extension tokens ----- */
+  --vsc-focus-border: #36c97a;
+  --vsc-contrast-active: transparent;
+
+  --vsc-titlebar-bg: #0a0f0c;
+  --vsc-titlebar-fg: #d6e8da;
+
+  --vsc-activitybar-bg: #0a0f0c;
+  --vsc-activitybar-fg: #d6e8da;
+  --vsc-activitybar-inactive-fg: #7f9584;
+  --vsc-activitybar-active-border: #36c97a;
+  --vsc-activitybar-badge-bg: #36c97a;
+  --vsc-activitybar-badge-fg: #06110a;
+
+  --vsc-sidebar-bg: #0a0f0c;
+  --vsc-sidebar-fg: #d6e8da;
+  --vsc-sidebar-title-fg: #d6e8da;
+  --vsc-sidebar-section-border: #1d2a21;
+
+  --vsc-tabs-bg: #0a0f0c;
+  --vsc-tab-active-bg: #0c120e;
+  --vsc-tab-active-fg: #eafff0;
+  --vsc-tab-inactive-bg: #0a0f0c;
+  --vsc-tab-inactive-fg: #7f9584;
+  --vsc-tab-hover-bg: #0c120e;
+  --vsc-tab-active-border-top: #36c97a;
+  --vsc-tab-border: #1d2a21;
+
+  --vsc-panel-bg: #0a0f0c;
+  --vsc-panel-title-active-fg: #d6e8da;
+  --vsc-panel-title-inactive-fg: #7f9584;
+  --vsc-panel-title-active-border: #36c97a;
+
+  --vsc-statusbar-bg: #0a0f0c;
+  --vsc-statusbar-fg: #d6e8da;
+  --vsc-statusbar-border: #1d2a21;
+  --vsc-statusbar-item-hover-bg: #36c97a22;
+  --vsc-statusbar-remote-bg: #178a4c;
+  --vsc-statusbar-remote-fg: #eafff0;
+
+  --vsc-input-bg: #070b09;
+  --vsc-input-fg: #d6e8da;
+  --vsc-input-border: #2c4032;
+  --vsc-input-placeholder: #4d5e51;
+  --vsc-dropdown-bg: #101711;
+  --vsc-dropdown-border: #2c4032;
+  --vsc-dropdown-list-bg: #101711;
+
+  --vsc-btn-bg: #36c97a;
+  --vsc-btn-fg: #06110a;
+  --vsc-btn-hover-bg: #4bd88a;
+  --vsc-btn-border: #ffffff1a;
+  --vsc-btn2-bg: transparent;
+  --vsc-btn2-fg: #d6e8da;
+  --vsc-btn2-hover-bg: #141d16;
+  --vsc-btn2-border: #2c4032;
+
+  --vsc-list-hover-bg: #141d16;
+  --vsc-list-active-bg: #123524;
+  --vsc-list-active-fg: #eafff0;
+  --vsc-list-inactive-bg: #16211a;
+  --vsc-list-focus-outline: #36c97a;
+
+  --vsc-badge-bg: #178a4c;
+  --vsc-badge-fg: #eafff0;
+
+  --vsc-menu-bg: #101711;
+  --vsc-menu-fg: #d6e8da;
+  --vsc-menu-border: #2c4032;
+  --vsc-menu-sel-bg: #36c97a;
+  --vsc-menu-sel-fg: #06110a;
+  --vsc-menu-separator: #1d2a21;
+
+  --vsc-widget-bg: #0d130f;
+  --vsc-widget-border: #1d2a21;
+  --vsc-widget-shadow: 0 2px 12px 2px rgba(0, 0, 0, 0.5);
+  --vsc-quickinput-bg: #0d130f;
+
+  --vsc-link: #5ce99a;
+  --vsc-code-bg: #070b09;
+  --vsc-blockquote-bg: #070b09;
+  --vsc-blockquote-border: #2c4032;
+
+  --vsc-progress: #36c97a;
+
+  --vsc-scrollbar: #36c97a40;
+  --vsc-scrollbar-hover: #36c97a80;
+  --vsc-scrollbar-active: #36c97ab3;
+}
+
+
+/* ==========================================================================
+   THEME-AWARE BASE (optional but recommended)
+   --------------------------------------------------------------------------
+   These few rules make selection + focus rings track the active theme.
+   They are safe to keep even if you don't adopt the rest of your app's
+   chrome styling. Remove if you prefer to own these entirely.
+   ========================================================================== */
+::selection {
+  background: color-mix(in srgb, var(--accent) 40%, transparent);
+}
+/* High-contrast uses VS Code's green selection block for legibility. */
+:root[data-theme="hc"] ::selection {
+  background: #008000;
+  color: #ffffff;
+}
+:focus-visible {
+  outline: 1px solid var(--vsc-focus-border, var(--accent));
+  outline-offset: -1px;
+}

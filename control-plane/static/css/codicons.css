@@ -1,0 +1,169 @@
+/* ==========================================================================
+   vsCodeFront — codicons (the subset the workbench uses)
+   ==========================================================================
+   Glyphs from @vscode/codicons (icons CC-BY-4.0, font MIT, Microsoft). The
+   font file ships beside this kit as fonts/codicon.ttf and install.sh
+   places it at <static>/fonts/codicon.ttf, which is what the @font-face
+   below expects. Serve static/ from another prefix? Edit the url() in the
+   APP's copy of this one line — or better, keep /static/ (every app in the
+   family does).
+
+   This is a SUBSET on purpose: ~140 classes instead of ~600 keeps the
+   stylesheet readable. Every class the kit's own markup, snippets, demo
+   and JS reference is here (tests/test_codicons.py proves it). Need a
+   glyph that is not? Look it up in reference/codicon-all.css and add the
+   one-liner to your APP stylesheet — not to this file inside the app
+   (install.sh --verify would flag the fork); send it upstream here if
+   two apps want it.
+   ========================================================================== */
+@font-face {
+  font-family: "codicon";
+  font-display: block;
+  src: url("/static/fonts/codicon.ttf") format("truetype");
+}
+.codicon[class*="codicon-"] {
+  font: normal normal normal 16px/1 codicon;
+  display: inline-block;
+  text-decoration: none;
+  text-rendering: auto;
+  text-align: center;
+  text-transform: none;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+}
+.codicon-add:before { content: "\ea60"; }
+.codicon-arrow-down:before { content: "\ea9a"; }
+.codicon-arrow-left:before { content: "\ea9b"; }
+.codicon-arrow-right:before { content: "\ea9c"; }
+.codicon-arrow-swap:before { content: "\ebcb"; }
+.codicon-arrow-up:before { content: "\eaa1"; }
+.codicon-beaker:before { content: "\ea79"; }
+.codicon-bell:before { content: "\eaa2"; }
+.codicon-bell-dot:before { content: "\eb9a"; }
+.codicon-book:before { content: "\eaa4"; }
+.codicon-calendar:before { content: "\eab0"; }
+.codicon-check:before { content: "\eab2"; }
+.codicon-check-all:before { content: "\ebb1"; }
+.codicon-checklist:before { content: "\eab3"; }
+.codicon-chevron-down:before { content: "\eab4"; }
+.codicon-chevron-right:before { content: "\eab6"; }
+.codicon-chevron-up:before { content: "\eab7"; }
+.codicon-circle-filled:before { content: "\ea71"; }
+.codicon-circle-large-filled:before { content: "\ebb4"; }
+.codicon-circle-outline:before { content: "\eabc"; }
+.codicon-clear-all:before { content: "\eabf"; }
+.codicon-clock:before { content: "\ea82"; }
+.codicon-close:before { content: "\ea76"; }
+.codicon-cloud:before { content: "\ebaa"; }
+.codicon-collapse-all:before { content: "\eac5"; }
+.codicon-color-mode:before { content: "\eac6"; }
+.codicon-copy:before { content: "\ebcc"; }
+.codicon-dashboard:before { content: "\eacd"; }
+.codicon-database:before { content: "\eace"; }
+.codicon-debug-restart:before { content: "\ead2"; }
+.codicon-debug-start:before { content: "\ead3"; }
+.codicon-debug-stop:before { content: "\ead7"; }
+.codicon-edit:before { content: "\ea73"; }
+.codicon-ellipsis:before { content: "\ea7c"; }
+.codicon-error:before { content: "\ea87"; }
+.codicon-extensions:before { content: "\eae6"; }
+.codicon-file:before { content: "\ea7b"; }
+.codicon-file-code:before { content: "\eae9"; }
+.codicon-files:before { content: "\eaf0"; }
+.codicon-filter:before { content: "\eaf1"; }
+.codicon-folder:before { content: "\ea83"; }
+.codicon-folder-opened:before { content: "\eaf7"; }
+.codicon-gear:before { content: "\eaf8"; }
+.codicon-git-branch:before { content: "\ec6f"; }
+.codicon-globe:before { content: "\eb01"; }
+.codicon-go-to-file:before { content: "\ea94"; }
+.codicon-graph:before { content: "\eb03"; }
+.codicon-graph-line:before { content: "\ebe2"; }
+.codicon-history:before { content: "\ea82"; }
+.codicon-home:before { content: "\eb06"; }
+.codicon-inbox:before { content: "\eb09"; }
+.codicon-info:before { content: "\ea74"; }
+.codicon-layout:before { content: "\ebeb"; }
+.codicon-lightbulb:before { content: "\ea61"; }
+.codicon-link-external:before { content: "\eb14"; }
+.codicon-list-tree:before { content: "\eb86"; }
+.codicon-loading:before { content: "\eb19"; }
+.codicon-mail:before { content: "\eb1c"; }
+.codicon-markdown:before { content: "\eb1d"; }
+.codicon-new-file:before { content: "\ea7f"; }
+.codicon-new-folder:before { content: "\ea80"; }
+.codicon-note:before { content: "\eb26"; }
+.codicon-output:before { content: "\eb9d"; }
+.codicon-package:before { content: "\eb29"; }
+.codicon-play:before { content: "\eb2c"; }
+.codicon-plug:before { content: "\eb2d"; }
+.codicon-pulse:before { content: "\eb31"; }
+.codicon-question:before { content: "\eb32"; }
+.codicon-record:before { content: "\eba7"; }
+.codicon-refresh:before { content: "\eb37"; }
+.codicon-remote:before { content: "\eb3a"; }
+.codicon-repo:before { content: "\ea62"; }
+.codicon-rocket:before { content: "\eb44"; }
+.codicon-save:before { content: "\eb4b"; }
+.codicon-search:before { content: "\ea6d"; }
+.codicon-server:before { content: "\eb50"; }
+.codicon-server-process:before { content: "\eba2"; }
+.codicon-settings-gear:before { content: "\eb51"; }
+.codicon-source-control:before { content: "\ea68"; }
+.codicon-split-horizontal:before { content: "\eb56"; }
+.codicon-sync:before { content: "\ea77"; }
+.codicon-tasklist:before { content: "\eb67"; }
+.codicon-terminal:before { content: "\ea85"; }
+.codicon-terminal-tmux:before { content: "\ebc8"; }
+.codicon-tools:before { content: "\eb6d"; }
+.codicon-trash:before { content: "\ea81"; }
+.codicon-vm:before { content: "\ea7a"; }
+.codicon-vm-running:before { content: "\eb7b"; }
+.codicon-warning:before { content: "\ea6c"; }
+.codicon-window:before { content: "\eb7f"; }
+.codicon-zap:before { content: "\ea86"; }
+
+@keyframes codicon-spin { 100% { transform: rotate(360deg); } }
+.codicon-modifier-spin { animation: codicon-spin 1.5s steps(30) infinite; }
+/* Any element flagged .spinning spins the codicon inside it (footer sync). */
+.spinning .codicon { animation: codicon-spin 1s steps(30) infinite; }
+
+/* ---- added for the apps (resman, mentora, solGit, soldo, cldlab) ---- */
+.codicon-account:before { content: "\eb99"; }
+.codicon-archive:before { content: "\ea98"; }
+.codicon-bug:before { content: "\eaaf"; }
+.codicon-chevron-left:before { content: "\eab5"; }
+.codicon-circle-slash:before { content: "\eabd"; }
+.codicon-circle-small:before { content: "\ec07"; }
+.codicon-cloud-download:before { content: "\eac2"; }
+.codicon-comment-discussion:before { content: "\eac7"; }
+.codicon-debug-pause:before { content: "\ead1"; }
+.codicon-device-camera:before { content: "\eada"; }
+.codicon-expand-all:before { content: "\eb95"; }
+.codicon-eye:before { content: "\ea70"; }
+.codicon-eye-closed:before { content: "\eae7"; }
+.codicon-file-media:before { content: "\eaea"; }
+.codicon-fold:before { content: "\eaf5"; }
+.codicon-github-inverted:before { content: "\eba1"; }
+.codicon-key:before { content: "\eb11"; }
+.codicon-law:before { content: "\eb12"; }
+.codicon-layout-sidebar-left:before { content: "\ebf3"; }
+.codicon-layout-sidebar-left-off:before { content: "\ec02"; }
+.codicon-link:before { content: "\eb15"; }
+.codicon-list-unordered:before { content: "\eb17"; }
+.codicon-lock:before { content: "\ea75"; }
+.codicon-menu:before { content: "\eb94"; }
+.codicon-organization:before { content: "\ea7e"; }
+.codicon-person:before { content: "\ea67"; }
+.codicon-pinned:before { content: "\eba0"; }
+.codicon-screen-full:before { content: "\eb4c"; }
+.codicon-screen-normal:before { content: "\eb4d"; }
+.codicon-sparkle:before { content: "\ec10"; }
+.codicon-split-vertical:before { content: "\eb57"; }
+.codicon-symbol-keyword:before { content: "\eb62"; }
+.codicon-tag:before { content: "\ea66"; }
+.codicon-unfold:before { content: "\eb73"; }
+.codicon-unlock:before { content: "\eb74"; }
+.codicon-versions:before { content: "\eb78"; }
+.codicon-wand:before { content: "\ebcf"; }
+

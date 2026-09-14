@@ -1,0 +1,32 @@
+[Unit]
+Description=paster front — the rofi prompt paster's control plane
+After=network.target
+StartLimitIntervalSec=300
+StartLimitBurst=5
+
+[Service]
+Type=simple
+WorkingDirectory=__PROJECT_PATH__
+# Extra origins that may frame this app (CSP frame-ancestors — solBench
+# plan §7). A mainBench shell on THIS host needs none: the app always
+# allows its own hostname on any port, so an empty value still docks.
+# Fill via install.sh --bench-origins only for a shell on a different
+# machine, space-separated (host policy from myApps.md, never a committed
+# literal). The app refuses to start on a malformed entry
+# (tests/test_bench_embed.py), so edit via install.sh, which validates,
+# rather than by hand here. The outer quotes are load-bearing: unquoted,
+# systemd splits the value on whitespace and every origin after the first
+# is silently lost.
+Environment="BENCH_SHELL_ORIGINS=__BENCH_SHELL_ORIGINS__"
+# The desktop actions (open the popup, apply the hotkey) need DISPLAY and
+# XAUTHORITY; the user manager's environment carries them on an X11 login
+# (systemctl --user show-environment) and this unit inherits it. Nothing
+# host-specific is written here. The port comes from .port at the repo root.
+ExecStart=__PROJECT_PATH__/run.sh --vname __VENV_NAME__ --skip-deps --public
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,57 @@
+{
+  "_comment": "4ColThems manifest — the kit's source of truth for theme IDENTITY: which themes exist, in what cycle order, and the handful of facts about each one that live outside CSS (the button label and icon, the mobile chrome colour, the color-scheme, the cldBar/remdev slug). Colour VALUES live in css/themes.css; terminal palettes live in terminal-themes.json. Every other file in the kit mirrors this one (the JS maps, theme4col.py, the CSS blocks) because each has to stand alone once copied into an app — there is no build step joining them. The suite in tests/ is what keeps the mirrors honest: change a theme here, run the tests, and they name every file still out of step.",
+  "version": 1,
+  "storageKeyDefault": "app-theme",
+  "attributes": {
+    "theme": "data-theme",
+    "key": "data-theme-key",
+    "icons": "data-theme-icons"
+  },
+  "order": ["dark", "light", "hc", "green"],
+  "themes": {
+    "dark": {
+      "label": "Dark Modern",
+      "source": "VS Code 1.118.1 theme-defaults — Dark Modern",
+      "colorScheme": "dark",
+      "metaColor": "#1f1f1f",
+      "accent": "#0078d4",
+      "codicon": "circle-filled",
+      "glyph": "☾",
+      "remdevSlug": "vscode-dark",
+      "description": "Neutral dark with a blue accent. The default: the bare :root selector carries it, so a page with no data-theme attribute still looks right."
+    },
+    "light": {
+      "label": "Light Modern",
+      "source": "VS Code 1.118.1 theme-defaults — Light Modern",
+      "colorScheme": "light",
+      "metaColor": "#ffffff",
+      "accent": "#005fb8",
+      "codicon": "circle-outline",
+      "glyph": "☀",
+      "remdevSlug": "vscode-light",
+      "description": "The only light theme, and the one that exposes integration bugs: an opaque embed canvas or a wrong color-scheme is invisible on the dark three."
+    },
+    "hc": {
+      "label": "Dark High Contrast",
+      "source": "VS Code 1.118.1 theme-defaults — Dark High Contrast",
+      "colorScheme": "dark",
+      "metaColor": "#000000",
+      "accent": "#f38518",
+      "codicon": "color-mode",
+      "glyph": "◐",
+      "remdevSlug": "vscode-hc",
+      "description": "Pure black surfaces; structure is drawn with #6fc3df borders and state with the #f38518 orange. Selection and active states are outlines, not fills."
+    },
+    "green": {
+      "label": "Garage Green",
+      "source": "Garage phosphor-green design system",
+      "colorScheme": "dark",
+      "metaColor": "#0c120e",
+      "accent": "#36c97a",
+      "codicon": "terminal",
+      "glyph": "❯",
+      "remdevSlug": "vscode-green",
+      "description": "Dark green-tinted phosphor terminal skin with a #36c97a accent and cyan for informational state."
+    }
+  }
+}
