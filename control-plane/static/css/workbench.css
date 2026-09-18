@@ -189,9 +189,15 @@ a:hover { text-decoration: underline; }
   letter-spacing: .2px;
   white-space: nowrap;
 }
-.activity-item:hover { color: var(--vsc-activitybar-fg); }
+.activity-item:hover {
+  color: var(--vsc-activitybar-fg);
+  background: color-mix(in srgb, var(--vsc-activitybar-active-border) 10%, transparent);
+}
+/* Selected tab: the whole square is tinted with the accent (alpha fill), the
+   2px accent line on the left stays as the VS Code-style anchor. */
 .activity-item.active {
   color: var(--vsc-activitybar-fg);
+  background: color-mix(in srgb, var(--vsc-activitybar-active-border) 22%, transparent);
   box-shadow: inset 2px 0 0 0 var(--vsc-activitybar-active-border);
 }
 .activity-badge {
@@ -771,6 +777,10 @@ input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--accent);
   color: var(--vsc-statusbar-remote-fg);
 }
 .statusbar-item.remote:hover { background: color-mix(in srgb, var(--vsc-statusbar-remote-bg) 85%, #000000); }
+/* The app item is a plain label until bench-signal.js (mainBench embed kit)
+   finds a shell to ask and marks it .is-live: same look, no promise. */
+.statusbar-item.remote:not(.is-live) { cursor: default; }
+.statusbar-item.remote:not(.is-live):hover { background: var(--vsc-statusbar-remote-bg); }
 .statusbar-item.warning-item { color: var(--vsc-statusbar-fg); }
 
 .meter { display: inline-flex; align-items: center; gap: 6px; padding: 0 8px; }

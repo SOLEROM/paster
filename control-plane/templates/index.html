@@ -44,6 +44,7 @@
   <script defer src="/static/js/config.js?v={{ asset_rev }}"></script>
   <script defer src="/static/js/doctor.js?v={{ asset_rev }}"></script>
   <script defer src="/static/js/help.js?v={{ asset_rev }}"></script>
+  <script defer src="/static/js/bench-signal.js?v={{ asset_rev }}"></script>
   <script defer src="/static/js/main.js?v={{ asset_rev }}"></script>
   {% if use_webterm %}
   <script type="module" src="/static/js/webterm-glue.js?v={{ asset_rev }}"></script>
@@ -56,7 +57,7 @@
     <button class="icon-btn drawer-btn" id="btn-drawer" style="display:none"
             title="Show the sidebar" aria-label="Open the sidebar">
       <span class="codicon codicon-list-unordered"></span></button>
-    <span class="brand" title="Show or hide the sidebar"><span class="codicon codicon-note"></span></span>
+    <span class="brand" role="button" tabindex="0" title="Show or hide the sidebar"><span class="codicon codicon-note"></span></span>
     <span class="titlebar-title">{{ app_name }}</span>
   </div>
   <div class="titlebar-center">
@@ -229,8 +230,9 @@
 
 <footer class="statusbar" id="status-bar">
   <div class="statusbar-side" id="status-left">
-    <span class="statusbar-item remote" id="app-item" role="button" tabindex="0"
-          title="Show or hide the sidebar">
+    <!-- A plain label standalone; docked in mainBench, bench-signal.js makes
+         it the button that asks the shell for its app bar. -->
+    <span class="statusbar-item remote" id="app-item">
       <span class="codicon codicon-note"></span><span>{{ app_name }}</span>
     </span>
     <span class="cldbar-slot" id="cldbar-slot" data-remdev-url="{{ remdev_url }}"></span>

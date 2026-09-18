@@ -316,10 +316,15 @@ function setupShell(opts = {}) {
       switchView(btn.dataset.view);
     }));
   setupSidebar();
-  // The footer's app item and the brand both toggle the tree.
-  wireButton($(".statusbar-item.remote"), toggleSidebar);
-  const brand = $(".titlebar .brand");
-  if (brand) brand.addEventListener("click", toggleSidebar);
+  // The brand toggles the tree. The footer's app item ships as a plain
+  // label: only the mainBench embed kit (bench-signal.js, optional) gives
+  // it an action — inside the shell's frame it asks for the shell's app bar.
+  wireButton($(".titlebar .brand"), toggleSidebar);
+  const appItem = $(".statusbar-item.remote");
+  const live = !!(window.benchSignal && window.benchSignal.setupItem(appItem));
+  // install.sh refreshes css/js only: an older template may still call the
+  // item a button. With no shell answering it has no action — say so.
+  if (appItem && !live) ["role", "tabindex"].forEach((a) => appItem.removeAttribute(a));
 
   let tabs = [];
   try { tabs = JSON.parse(restore("tabs") || "[]"); } catch (_) { tabs = []; }
